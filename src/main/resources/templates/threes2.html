@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H+ 后台主题UI框架 - Bootstrap Table</title>
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/css/style.min862f.css?v=4.1.0}" type="text/css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" th:href="@{/layui/layer.css}" type="text/css"/>
+
+    <style>
+        .data-contents {
+            margin-top: 10px;
+            height: 600px;
+            overflow-y: auto;
+        }
+        .data-contents span {
+            display: inline-block;
+            padding: 0 5px;
+            border: 1px solid;
+            border-radius: 8px;
+            margin: 3px 3px;
+            color: #757373;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <!-- one -->
+                <div class="col-sm-4">
+                    <h5 class="example-title">设置随机名字</h5>
+                    <div id="ranname_toolbar" style="margin-bottom: -50px;display: inline-flex ">
+<!--                        <button class="btn btn-danger" onclick="deleteComm()">删除</button>-->
+                        <input class="form-control" type="text" id="ranName" style="width: 200px;margin-left: 50px" />
+                        <button class="btn btn-primary" onclick="addRandomna()">添加</button>
+                    </div>
+                    <div class="data-contents" id="runNames"></div>
+                </div>
+                <!-- one -->
+                <!-- two -->
+                <div class="col-sm-4">
+                    <h5 class="example-title">设置敏感词</h5>
+                    <div id="bannad_toolbar" style="margin-bottom: -50px;display: inline-flex ">
+<!--                        <button class="btn btn-danger" onclick="deleteComm()">删除</button>-->
+                        <input class="form-control" id="bannadna" type="text" style="width: 200px;margin-left: 50px" />
+                        <button class="btn btn-primary" onclick="addBannad()">添加</button>
+                    </div>
+                    <div class="data-contents" id="bannads"></div>
+                </div>
+                <!-- two -->
+                <!-- three -->
+                <div class="col-sm-4">
+                    <h5 class="example-title">设置主角</h5>
+                    <input class="form-control" type="text" id="zhujue" style="width: 200px;display: inline-block;" />
+                    <button class="btn btn-primary" onclick="updateZJ()">修改</button>
+                </div>
+                <!-- three -->
+            </div>
+        </div>
+    </div>
+    <!-- End Panel Other -->
+</div>
+<script th:src="@{/js/jquery.min.js?v=2.1.4}" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" ></script>
+<script th:src="@{/js/bs_common.js}" ></script>
+<script th:src="@{/layui/layer.js}" ></script>
+
+</body>
+
+<script type="text/javascript">
+    $(function () {
+        // initTableNoPage("zhujue","",columns3,"");
+        loadZhujue();
+        loadSpans("/getAllBannd","bannads");
+        loadSpans("/getAllRanname","runNames");
+        keydownFun("ranName",function () {addRandomna();});
+        keydownFun("bannadna",function () {addBannad();});
+        keydownFun("zhujue",function () {updateZJ()});
+    })
+    
+    function keydownFun(id,Fun) {
+        $("#" + id).keydown(function (event) {
+            var code = event.keyCode;
+            if (code == 13) {
+                Fun();
+            }
+        })
+    }
+    function addRandomna() {
+       var name =  $("#ranName").val().trim();
+       if (name.length > 0) {
+           $.ajax({
+               url:"/setRandName",
+               data:{username:name},
+               success:function (res) {
+                   layer.msg('添加成功~');
+                   loadSpans("/getAllRanname","runNames");
+               }
+           })
+       }
+    }
+    function addBannad() {
+       var name =  $("#bannadna").val().trim();
+       if (name.length > 0) {
+           $.ajax({
+               url:"/redis/add",
+               data:{username:name},
+               success:function (res) {
+                   layer.msg('添加成功~');
+                   loadSpans("/getAllBannd","bannads");
+               }
+           })
+       }
+    }
+    
+    function updateZJ(){
+        var name = $("#zhujue").val().trim();
+        if (name.length > 0) {
+            $.ajax({
+                url:"/updateHY",
+                data:{hName:name},
+                success:function (res) {
+                    layer.msg('修改成功~');
+                }
+            })
+        }
+    }
+    
+    function loadSpans(url,divId) {
+        $.ajax({
+            url:url,
+            success:function (res) {
+                var datas = res.result;
+                var spans = "";
+                for (var i=0;i<datas.length;i++) {
+                    spans += "<span>" + datas[i] + "</span>";
+                }
+                $("#" + divId).html(spans);
+            }
+        })
+    }
+    function loadZhujue() {
+        $.ajax({
+            url:"/findHY",
+            success:function (res) {
+                $("#zhujue").val(res)
+            }
+        })
+    }
+    
+</script>
+<!-- Mirrored from www.zi-han.net/theme/hplus/table_bootstrap.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:20:06 GMT -->
+</html>

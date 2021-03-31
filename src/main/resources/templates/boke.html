@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 代码高亮css -->
+    <link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/wangeditor@latest/dist/wangEditor.min.js" ></script>
+    <!-- 代码高亮 -->
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <style>
+        .box{
+            width: 80%;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+        .btns {
+            width: 30%;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+        .btns .btn{
+            
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <input type="text" class="form-control" id="title" placeholder="请输入标题">
+    <div id="wangEdit"></div>
+    <div class="btns">
+        <button class="btn btn-success" onclick="submitBoke()">提交</button>
+        <button class="btn btn-danger" onclick="editor.txt.clear()" style="float: right">清空</button>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    const E = window.wangEditor
+    const editor = new E("#wangEdit")
+    // 或者 const editor = new E(document.getElementById('div1'))
+    // 设置编辑区域高度为 500px
+    editor.config.height = 700
+    editor.config.zIndex = 500
+    // 取消自动 focus
+    editor.config.focus = false
+    // editor.config.placeholder = '' // 不想使用 placeholder ，赋值为空字符串即可
+    // 可使用 editor.txt.clear() 清空编辑器内容。
+    // 使用 editor.txt.text() 获取 text 文本。
+    // 使用 editor.txt.html() 获取 html
+    // 还可以修改历史记录的步数。默认 30 步
+    editor.config.historyMaxSize = 50 // 修改为 50 步
+    // 默认情况下，显示所有菜单
+    editor.config.menus = [
+        'head',
+        'bold',
+        'fontSize',
+        'fontName',
+        'italic',
+        'underline',
+        'strikeThrough',
+        'indent',
+        'lineHeight',
+        'foreColor',
+        'backColor',
+        'link',
+        'list',
+        // 'todo',
+        'justify',
+        'quote',
+        // 'emoticon',
+        'image',
+        // 'video',
+        'table',
+        'code',
+        'splitLine',
+        'undo',
+        'redo',
+    ]
+    // 挂载highlight插件
+    editor.highlight = hljs
+    //插入代码语言配置
+    editor.config.languageType = [
+        // 'Bash',
+        'Java',
+        'C',
+        'C#',
+        'C++',
+        'CSS',
+        'JavaScript',
+        'JSON',
+        // 'TypeScript',
+        // 'Plain text',
+        'Html',
+        'XML',
+        // 'SQL',
+        // 'Go',
+        // 'Kotlin',
+        // 'Lua',
+        // 'Markdown',
+        // 'PHP',
+        // 'Python',
+        // 'Shell Session',
+        // 'Ruby',
+    ]
+    // 自定义检查插入的链接
+    editor.config.linkCheck = function(text, link) {
+        // 以下情况，请三选一
+
+        // 1. 返回 true ，说明检查通过
+        return true
+
+        // // 2. 返回一个字符串，说明检查未通过，编辑器会阻止链接插入。会 alert 出错误信息（即返回的字符串）
+        // return '链接有 xxx 错误'
+
+        // 3. 返回 undefined（即没有任何返回），说明检查未通过，编辑器会阻止链接插入。
+        // 此处，你可以自定义提示错误信息，自由发挥
+    }
+    // 自定义检查插入图片的链接
+    // 参数中的imgSrc、alt、href分别代表图片地址、图片文本说明和跳转链接
+    // 后面两个参数是可选参数
+    editor.config.linkImgCheck = function(imgSrc,alt,href) {
+        // 以下情况，请三选一
+
+        // 1. 返回 true ，说明检查通过
+        return true
+
+        // // 2. 返回一个字符串，说明检查未通过，编辑器会阻止图片插入。会 alert 出错误信息（即返回的字符串）
+        // return '图片 src 有 xxx 错误'
+
+        // 3. 返回 undefined（即没有任何返回），说明检查未通过，编辑器会阻止图片插入。
+        // 此处，你可以自定义提示错误信息，自由发挥
+    }
+    // 可以通过配置 editor.config.pasteIgnoreImg = true 来忽略粘贴的图片
+    // 可使用 base64 格式保存图片。即，可选择本地图片，编辑器用 base64 格式显示图片。
+    editor.config.uploadImgShowBase64 = true
+    editor.create()
+    
+    function submitBoke() {
+        var text = editor.txt.text()
+        var html = editor.txt.html()
+        var title = $("#title").val();
+        console.log(text)
+        console.log(html)
+    }
+</script>
+评论
+</html>
