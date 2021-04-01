@@ -52,25 +52,13 @@ function initTable(tableId,url,myColumns,toolbarId) {
             }
         },
         sidePagination: "server",//服务端分页
-        /*responseHandler: function (res) {//自定义回传数据
-            if (res.data == null) {
-                return {
-                    "total": res.data,//总页数
-                    "rows": res.data   //回传的数据
-                }
-            }
-            else {
-                return {
-                    "total": res.data.total,
-                    "rows": res.data.data
-                };
-            }
-        },*/
         columns: myColumns
     });
 }
 /*不分页*/
 function initTableNoPage(tableId,url,myColumns,toolbarId) {
+    // var columns = [{checkbox: true}];
+    // columns.push(myColumns);
     $("#" + tableId).bootstrapTable('destroy');//销毁表格
     $('#' + tableId).bootstrapTable({
         clickToSelect: true,//启用单击选中
@@ -82,7 +70,7 @@ function initTableNoPage(tableId,url,myColumns,toolbarId) {
         toolbar: '#' + toolbarId,
         // contentType: "application/x-www-form-urlencoded",//post提交必须要有
         method: 'get',//提交方式
-        singleSelect: false,
+        singleSelect: true,
         height: $(window).height() - 100,
         // pageNumber: 1,     //初始化加载第一页，默认第一页
         // pageSize: 100,      //每页的记录行数（*）
@@ -111,4 +99,48 @@ function initTableNoPage(tableId,url,myColumns,toolbarId) {
         },*/
         columns: myColumns
     });
+}
+
+function keydownFun(id,Fun) {
+    $("#" + id).keydown(function (event) {
+        var code = event.keyCode;
+        if (code == 13) {
+            Fun();
+        }
+    })
+}
+
+/**
+ * 动态生成select选项
+ * @param selectId
+ * @param parentId
+ * @returns
+ */
+function initSelectOptions(selectId, url,rows,key,value) {
+    var selectObj = $("#" + selectId);
+    $.ajax({
+        url : url,
+        async : false,
+        type : "GET",
+        success : function(result) {
+            var configs = result[rows];
+            selectObj.find("option:not(:first)").remove();
+            for (var i in configs) {
+                var addressConfig = configs[i];
+                var optionValue = addressConfig[key];
+                var optionText = addressConfig[value];
+               // var opetion = new Option(optionText, optionValue);
+                var op = "<option value='" + optionValue + "'>" + optionText + "</option>"
+                // selectObj.append(new Option(optionText, optionValue));
+                console.log(op)
+                selectObj.append(op);
+            }
+                console.log(selectObj)
+            // 刷新select
+            selectObj.selectpicker('refresh');
+        },
+        error : function(result) {
+            // toastr.error('获取信息失败，原因：' + result.errorMessage);
+        }
+    });// ajax
 }

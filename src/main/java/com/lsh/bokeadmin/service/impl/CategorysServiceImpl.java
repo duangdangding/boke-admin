@@ -12,5 +12,9 @@ public class CategorysServiceImpl extends ServiceImpl<CategorysMapper, Categorys
     
     @Autowired
     private CategorysMapper categorysMapper;
-    
+
+    @Override
+    public long addCate(Categorys categorys) {
+        return categorysMapper.addCate(categorys);
+    }
 }

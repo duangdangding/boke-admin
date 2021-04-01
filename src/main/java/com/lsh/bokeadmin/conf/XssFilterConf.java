@@ -1,7 +1,7 @@
 package com.lsh.bokeadmin.conf;
 
 import cn.hutool.core.util.StrUtil;
-import com.lsh.birthdayadmin.filter.XssFilter;
+import com.lsh.bokeadmin.filter.XssFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

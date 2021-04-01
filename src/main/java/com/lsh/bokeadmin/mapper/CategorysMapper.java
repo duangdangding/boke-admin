@@ -5,4 +5,5 @@ import com.lsh.bokeadmin.entry.Bokes;
 import com.lsh.bokeadmin.entry.Categorys;
 
 public interface CategorysMapper extends BaseMapper<Categorys> {
+    long addCate(Categorys categorys);
 }
