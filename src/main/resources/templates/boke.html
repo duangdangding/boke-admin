@@ -6,12 +6,12 @@
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}"/>
     <!-- 代码高亮css -->
     <link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-    <!-- Latest compiled and minified CSS -->
-<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">-->
-
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/layui/layer.css}" type="text/css"/>
+    
+    
     <script th:src="@{/js/jquery-3.8.min.js}" ></script>
-<!--    <script th:src="@{/js/bootstrap.min.js}" ></script>-->
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/wangeditor@latest/dist/wangEditor.min.js" ></script>
@@ -23,23 +23,41 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script th:src="@{/js/bs_common.js}" ></script>
-
-    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
-<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-*.min.js"></script>-->
-
+    <script th:src="@{/layui/layer.js}" ></script>
     <style>
+        body{
+            background-size: cover !important;
+        }
         .box{
             width: 60%;
-            margin: 0 auto;
-            padding: 10px 0;
+            padding: 10px;
+            background-color: white;
+            margin: 10px auto 0;
         }
         .btns {
             width: 30%;
-            margin: 0 auto;
-            padding: 10px 0;
+            margin: -15px auto 0;
         }
         .btns .btn{
             
+        }
+        .cate_se {
+            padding: 10px;
+        }
+        .panel-cover--overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+            display: block;
+            background-color: rgba(68, 68, 68, 0.6);
+            /*background-image: -webkit-linear-gradient(-410deg, rgba(68, 68, 68, 0.6) 20%, rgba(0, 0, 0, 0.9));*/
+            /*background-image: linear-gradient(140deg,rgba(68, 68, 68, 0.6) 20%, rgba(0, 0, 0, 0.9));*/
+        }
+        #title{
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -47,22 +65,30 @@
 <div class="box">
     <input type="text" class="form-control" id="title" placeholder="请输入标题">
     <div id="wangEdit"></div>
-    <select class="selectpicker form-control" onchange="initCity()" id="cateitemSelect" name="cate">
-        <option value="">--请选择--</option>
-    </select>
+    <div class="form-group cate_se">
+        <label for="cateitemSelect">类别：</label>
+        <select class="selectpicker form-control" id="cateitemSelect" name="cate">
+            <option value="">--请选择--</option>
+        </select>
+    </div>
+    
     <div class="btns">
         <button class="btn btn-success" onclick="submitBoke()">提交</button>
         <button class="btn btn-danger" onclick="editor.txt.clear()" style="float: right">清空</button>
     </div>
+    <!--遮罩层-->
 </div>
 
+<div class="panel-cover--overlay"></div>
 </body>
 <script type="text/javascript">
 
     $(function () {
+        document.body.style.background = "url(/img/bokebg/" + ranNUm(1,10) + ".jpg) top left no-repeat";
         $('#cateitemSelect').selectpicker({width:120});
         initSelectOptions("cateitemSelect", "/getAllCates","rows","cateId","cateName");
-        $('#cateitemSelect').selectpicker('refresh');
+        // $('#cateitemSelect').selectpicker('refresh');
+        $('#cateitemSelect').selectpicker('render');
     });
     
     const E = window.wangEditor
@@ -166,11 +192,41 @@
     editor.create()
     
     function submitBoke() {
-        var text = editor.txt.text()
-        var html = editor.txt.html()
-        var title = $("#title").val();
-        console.log(text)
-        console.log(html)
+        var text = editor.txt.text().trim();
+        var html = editor.txt.html().trim();
+        var title = $("#title").val().trim();
+        var cateId = $("#cateitemSelect").val();
+        // console.log(text)
+        // console.log(html)
+        $("#reslsss").html(html)
+        if (title.length > 0 && html.length > 0 && cateId.length > 0) {
+            $.post({
+                url : "/addBoke",
+                dataType : "json",
+                data:{title:title,bokeCont:html,cateId:cateId},
+                success : function (data) {
+                    layer.msg(data.result);
+                }
+            })
+        }
+    }
+    $(".panel-cover--overlay").css("width",document.body.offsetWidth)
+    $(".panel-cover--overlay").css("height",document.body.offsetHeight+100)
+
+    var if_bokeId = sessionStorage.getItem('bokeId');
+    if (if_bokeId != null) {
+        $.ajax({
+            url: "/getBoke/" + if_bokeId,
+            success : function (data) {
+                var boke = data.result;
+                console.log(JSON.stringify(boke))
+                $("#title").val(boke.title);
+                $("#cateitemSelect").val(boke.cateId);
+                editor.txt.html(boke.bokeCont);
+                sessionStorage.removeItem('bokeId');
+
+            }
+        })
     }
 </script>
 

@@ -3,4 +3,19 @@
 
 <mapper namespace="com.lsh.bokeadmin.mapper.BokesMapper">
 
+    <select id="getBokes" resultType="com.lsh.bokeadmin.entry.BokeListEntry">
+        select b.boke_id,b.title,b.create_time,b.cate_id,b.update_time,b.user_id,
+        b.like_num,b.reply_num,b.look_num,b.label_id,c.cate_name cateName from bokes b
+        left join categorys c on c.cate_id = b.cate_id
+        <where>
+            <if test="cateId != null">
+                and  b.cate_id = #{cateId}
+            </if>
+            <if test="title != null and title != ''">
+                and b.title like concat('%',#{title},'%')
+            </if>
+        </where>
+        order by b.update_time desc
+    </select>
+
 </mapper>

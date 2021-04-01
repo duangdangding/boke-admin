@@ -127,15 +127,12 @@ function initSelectOptions(selectId, url,rows,key,value) {
             selectObj.find("option:not(:first)").remove();
             for (var i in configs) {
                 var addressConfig = configs[i];
-                var optionValue = addressConfig[key];
-                var optionText = addressConfig[value];
-               // var opetion = new Option(optionText, optionValue);
-                var op = "<option value='" + optionValue + "'>" + optionText + "</option>"
-                // selectObj.append(new Option(optionText, optionValue));
-                console.log(op)
-                selectObj.append(op);
+                var optionValue = addressConfig[value];
+                var optionText = addressConfig[key];
+               //  var op = "<option value='" + optionValue + "'>" + optionText + "</option>"
+                selectObj.append(new Option(optionValue, optionText));
+                // selectObj.append(op);
             }
-                console.log(selectObj)
             // 刷新select
             selectObj.selectpicker('refresh');
         },
@@ -143,4 +140,13 @@ function initSelectOptions(selectId, url,rows,key,value) {
             // toastr.error('获取信息失败，原因：' + result.errorMessage);
         }
     });// ajax
+}
+/**
+ * min - max 之间的随机数
+ * @param min
+ * @param max
+ * @returns {*}
+ */
+function ranNUm(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
 }
