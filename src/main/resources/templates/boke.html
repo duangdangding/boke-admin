@@ -24,6 +24,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script th:src="@{/js/bs_common.js}" ></script>
     <script th:src="@{/layui/layer.js}" ></script>
+    <!--OSS-->
+    <script type="text/javascript" src="http://gosspublic.alicdn.com/aliyun-oss-sdk.min.js"></script>
     <style>
         body{
             background-size: cover !important;
@@ -76,9 +78,11 @@
         <button class="btn btn-success" onclick="submitBoke()">提交</button>
         <button class="btn btn-danger" onclick="editor.txt.clear()" style="float: right">清空</button>
     </div>
-    <!--遮罩层-->
 </div>
-
+<div id="asdasdasdasd">
+    
+</div>
+    <!--遮罩层-->
 <div class="panel-cover--overlay"></div>
 </body>
 <script type="text/javascript">
@@ -188,7 +192,32 @@
     }
     // 可以通过配置 editor.config.pasteIgnoreImg = true 来忽略粘贴的图片
     // 可使用 base64 格式保存图片。即，可选择本地图片，编辑器用 base64 格式显示图片。
-    editor.config.uploadImgShowBase64 = true
+    // editor.config.uploadImgShowBase64 = true
+    editor.config.customUploadImg = function (resultFiles, insertImgFn) {
+        // resultFiles 是 input 中选中的文件列表
+        var daw = new FormData();
+        for(var i=0;i<resultFiles.length;i++){
+            daw.append("files",resultFiles[i]);
+        }
+        // insertImgFn 是获取图片 url 后，插入到编辑器的方法
+        $.ajax({
+            type: 'post',
+            url: "/oss/upload", //上传文件的请求路径必须是绝对路劲
+            data: daw,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success:function (data) {
+                var urlMaps = data.result;
+                for (let i = 0; i < urlMaps.length; i++) {
+                    insertImgFn(urlMaps[i].ossFileUrlBoot);
+                }
+            },
+            error:function () {
+                alert("上传失败");
+            }
+        }); 
+    }
     editor.create()
     
     function submitBoke() {
@@ -224,7 +253,7 @@
                 $("#cateitemSelect").val(boke.cateId);
                 editor.txt.html(boke.bokeCont);
                 sessionStorage.removeItem('bokeId');
-
+$("#asdasdasdasd").html(boke.bokeCont)
             }
         })
     }

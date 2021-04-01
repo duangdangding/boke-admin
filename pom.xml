@@ -41,6 +41,13 @@
             <version>3.2.0</version>
         </dependency>
 
+        <!--OSS-->
+        <!-- 阿里云OSS -->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>3.10.2</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
